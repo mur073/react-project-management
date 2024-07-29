@@ -1,3 +1,3 @@
-# React Management App
+# React Project Management
 
-![React Management App screenshot](src/assets/asset.png)
+![React Project Management screenshot](src/assets/asset.png)
