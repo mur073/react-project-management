@@ -4,11 +4,9 @@ import { useContext } from 'react';
 import { ProjectsContext } from '../store/projects-context';
 
 const SelectedProject = () => {
-  const { projectsState, onDeleteProject } = useContext(ProjectsContext);
-  const { tasks } = projectsState;
-  const project = projectsState.projects.find(
-    (project) => project.id === projectsState.selectedProjectId
-  );
+  const { tasks, projects, selectedProjectId, onDeleteProject } = useContext(ProjectsContext);
+
+  const project = projects.find((project) => project.id === selectedProjectId);
 
   const formattedDate = new Date(project.date).toLocaleDateString('en-US', {
     year: 'numeric',
