@@ -1,7 +1,7 @@
 {
-  "name": "refs-demo-project",
+  "name": "Project Management App",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
