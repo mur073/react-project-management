@@ -1,4 +1,4 @@
-import { useState, createContext } from 'react';
+import { useReducer, createContext } from 'react';
 
 export const ProjectsContext = createContext({
   selectedProjectId: undefined,
@@ -13,100 +13,135 @@ export const ProjectsContext = createContext({
   onDeleteTask: () => {},
 });
 
+const projectsReducer = (state, action) => {
+  if (action.type === 'START_ADD_PROJECT') {
+    return {
+      ...state,
+      selectedProjectId: null,
+    };
+  }
+
+  if (action.type === 'CANCEL_ADD_PROJECT') {
+    return {
+      ...state,
+      selectedProjectId: undefined,
+    };
+  }
+
+  if (action.type === 'ADD_PROJECT') {
+    const newProjectId = Math.random();
+    const newProject = {
+      ...action.payload,
+      id: newProjectId,
+    };
+
+    return {
+      ...state,
+      selectedProjectId: newProjectId,
+      projects: [...state.projects, newProject],
+    };
+  }
+
+  if (action.type === 'SELECT_PROJECT') {
+    return {
+      ...state,
+      selectedProjectId: action.payload,
+    };
+  }
+
+  if (action.type === 'DELETE_PROJECT') {
+    return {
+      ...state,
+      selectedProjectId: undefined,
+      projects: state.projects.filter((project) => project.id !== state.selectedProjectId),
+    };
+  }
+
+  if (action.type === 'ADD_TASK') {
+    const taskId = Math.random();
+    const newTask = {
+      text: action.payload,
+      projectId: state.selectedProjectId,
+      id: taskId,
+    };
+
+    return {
+      ...state,
+      tasks: [...state.tasks, newTask],
+    };
+  }
+
+  if (action.type === 'DELETE_TASK') {
+    return {
+      ...state,
+      tasks: state.tasks.filter((task) => task.id !== action.payload),
+    };
+  }
+};
+
 const ProjectsContextProvider = ({ children }) => {
-  const [projectsState, setProjectsState] = useState({
+  const [projectsState, projectsStateDispatch] = useReducer(projectsReducer, {
     selectedProjectId: undefined,
     projects: [],
     tasks: [],
   });
 
   const handleStartAddProject = () => {
-    if (projectsState.selectedProjectId === null) {
-      return;
-    }
+    if (projectsState.selectedProjectId === null) return;
 
-    setProjectsState((prevProjectsState) => ({
-      ...prevProjectsState,
-      selectedProjectId: null,
-    }));
+    projectsStateDispatch({
+      type: 'START_ADD_PROJECT',
+    });
   };
 
   const handleCancelAddProject = () => {
     if (projectsState.selectedProjectId === undefined) return;
 
-    setProjectsState((prevProjectsState) => ({
-      ...prevProjectsState,
-      selectedProjectId: undefined,
-    }));
+    projectsStateDispatch({
+      type: 'CANCEL_ADD_PROJECT',
+    });
   };
 
   const handleAddProject = (projectData) => {
-    setProjectsState((prevProjectsState) => {
-      const newProjectId = Math.random();
-      const newProject = {
-        ...projectData,
-        id: newProjectId,
-      };
-
-      return {
-        ...prevProjectsState,
-        selectedProjectId: newProjectId,
-        projects: [...prevProjectsState.projects, newProject],
-      };
+    projectsStateDispatch({
+      type: 'ADD_PROJECT',
+      payload: projectData,
     });
   };
 
   const handleProjectSelect = (id) => {
-    setProjectsState((prevProjectsState) => ({
-      ...prevProjectsState,
-      selectedProjectId: id,
-    }));
+    projectsStateDispatch({
+      type: 'SELECT_PROJECT',
+      payload: id,
+    });
   };
 
   const handleDeleteProject = () => {
-    setProjectsState((prevProjectsState) => {
-      return {
-        ...prevProjectsState,
-        selectedProjectId: undefined,
-        projects: prevProjectsState.projects.filter(
-          (project) => project.id !== prevProjectsState.selectedProjectId
-        ),
-      };
+    projectsStateDispatch({
+      type: 'DELETE_PROJECT',
     });
   };
 
   const handleAddTask = (text) => {
     if (text.trim() === '') return;
 
-    setProjectsState((prevProjectsState) => {
-      const taskId = Math.random();
-      const newTask = {
-        text: text,
-        projectId: prevProjectsState.selectedProjectId,
-        id: taskId,
-      };
-
-      return {
-        ...prevProjectsState,
-        tasks: [...prevProjectsState.tasks, newTask],
-      };
+    projectsStateDispatch({
+      type: 'ADD_TASK',
+      payload: text,
     });
   };
+
   const handleDeleteTask = (id) => {
-    setProjectsState((prevProjectsState) => {
-      return {
-        ...prevProjectsState,
-        tasks: prevProjectsState.tasks.filter((task) => task.id !== id),
-      };
+    projectsStateDispatch({
+      type: 'DELETE_TASK',
+      payload: id,
     });
   };
 
   return (
     <ProjectsContext.Provider
       value={{
-        selectedProjectId: projectsState.selectedProjectId,
-        projects: projectsState.projects,
-        tasks: projectsState.tasks,
+        ...projectsState,
         onSelectProject: handleProjectSelect,
         onStartAddProject: handleStartAddProject,
         onAddProject: handleAddProject,
