@@ -2,8 +2,8 @@ import { useReducer, createContext } from 'react';
 
 export const ProjectsContext = createContext({
   selectedProjectId: undefined,
-  projects: [],
   tasks: [],
+  projects: [],
   onStartAddProject: () => {},
   onSelectProject: () => {},
   onAddProject: () => {},
