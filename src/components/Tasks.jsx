@@ -1,11 +1,18 @@
 import NewTask from './NewTask';
 
-const Tasks = ({ tasks, onAddTask, onDeleteTask }) => {
+import { useContext } from 'react';
+import { ProjectsContext } from '../store/projects-context';
+
+const Tasks = ({ tasks }) => {
+  const { onDeleteTask } = useContext(ProjectsContext);
+
   return (
     <section>
       <h2 className="text-2xl font-bold text-stone-700 mb-4">Tasks</h2>
-      <NewTask onAddTask={onAddTask} />
+      <NewTask />
+
       {!tasks.length && <p className="text-stone-800 my-4">You haven't added any tasks yet.</p>}
+
       {tasks.length > 0 && (
         <ul className="flex flex-col gap-2 mt-8 rounded-md">
           {tasks.map((task) => {

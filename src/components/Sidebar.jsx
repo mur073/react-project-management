@@ -1,8 +1,7 @@
-import Button from './Button';
-
 import { useContext } from 'react';
-
 import { ProjectsContext } from '../store/projects-context';
+
+import Button from './Button';
 
 const Sidebar = () => {
   const { onStartAddProject, onSelectProject, projectsState } = useContext(ProjectsContext);

@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { ProjectsContext } from '../store/projects-context';
 
-const NewTask = ({ onAddTask }) => {
+const NewTask = () => {
+  const { onAddTask } = useContext(ProjectsContext);
+
   const [enteredTask, setEnteredTask] = useState('');
 
   const handleChange = (e) => {

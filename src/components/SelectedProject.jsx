@@ -1,6 +1,15 @@
 import Tasks from './Tasks';
 
-const SelectedProject = ({ tasks, project, onDeleteProject, onAddTask, onDeleteTask }) => {
+import { useContext } from 'react';
+import { ProjectsContext } from '../store/projects-context';
+
+const SelectedProject = () => {
+  const { projectsState, onDeleteProject } = useContext(ProjectsContext);
+  const { tasks } = projectsState;
+  const project = projectsState.projects.find(
+    (project) => project.id === projectsState.selectedProjectId
+  );
+
   const formattedDate = new Date(project.date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -20,11 +29,7 @@ const SelectedProject = ({ tasks, project, onDeleteProject, onAddTask, onDeleteT
         <p className="text-stone-600 whitespace-pre-wrap">{project.desc}</p>
       </header>
 
-      <Tasks
-        tasks={tasks.filter((task) => task.projectId === project.id)}
-        onAddTask={onAddTask}
-        onDeleteTask={onDeleteTask}
-      />
+      <Tasks tasks={tasks.filter((task) => task.projectId === project.id)} />
     </div>
   );
 };
